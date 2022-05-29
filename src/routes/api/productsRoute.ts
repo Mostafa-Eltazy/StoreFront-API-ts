@@ -20,9 +20,9 @@ productsRoute.get(
     const product = await store.show(productID);
     if (product) {
       res.json(product);
+    } else {
+      res.send(`Failed to find product with id: ${productID}`);
     }
-
-    res.send(`Failed to find product with id: ${productID}`);
   }
 );
 
