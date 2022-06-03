@@ -29,6 +29,23 @@ ordersRoute.get(
     }
   }
 );
+
+ordersRoute.get(
+  "/user/:id",
+  validateJWT,
+
+  async (req: express.Request,res: express.Response) => {
+    const userID: string = req.params.id;
+    try {
+      const userOrders = await store.getUserOrders(userID);
+      res.json(userOrders);
+    } catch (err) {
+      res.status(400);
+      res.json(err);
+    }
+  }
+);
+
 ordersRoute.post(
   "/create/",
   validateJWT,

@@ -31,7 +31,7 @@ export class OrdersStore {
     try {
       const conn = await client.connect();
       const sql = `SELECT * FROM orders WHERE id=($1)`;
-      const result = (await conn.query(sql)).rows[0];
+      const result = (await conn.query(sql,[id])).rows[0];
       conn.release();
       return result;
     } catch (err) {
