@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 // Create token Validator middleware
 
-const authToken = (req: Request, res: Response, next: () => void) => {
+const validateJWT = (req: Request, res: Response, next: () => void) => {
     try {
         const authorizeHeader= (req.headers.authorization as unknown) as string;
 
@@ -19,4 +19,4 @@ const authToken = (req: Request, res: Response, next: () => void) => {
         res.json('invalid token');
     }
 }
-export default authToken;
+export default validateJWT;

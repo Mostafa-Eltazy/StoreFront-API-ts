@@ -1,6 +1,6 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import authToken from "../../middleware/JWTauth";
+import validateJWT from "../../middleware/validateJWT";
 import { User } from "../../models/users";
 import { UserStore } from "../../handlers/usersHandler";
 
@@ -9,7 +9,7 @@ const store = new UserStore();
 
 usersRoute.get(
   "/",
-  authToken,
+  validateJWT,
   async (req: express.Request, res: express.Response): Promise<void> => {
     const users = await store.index();
     res.json(users);
@@ -55,7 +55,7 @@ usersRoute.get("/auth", async (req: express.Request, res: express.Response) => {
 
 usersRoute.get(
   "/show/:id",
-  authToken,
+  validateJWT,
   async (req: express.Request, res: express.Response): Promise<void> => {
     const userID: string = req.params.id;
 
