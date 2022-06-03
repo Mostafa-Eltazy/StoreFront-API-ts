@@ -1,4 +1,6 @@
 import express from "express";
+import jwt from "jsonwebtoken";
+import authToken from "../../middleware/JWTauth";
 import { User } from "../../models/users";
 import { UserStore } from "../../handlers/usersHandler";
 
@@ -7,8 +9,8 @@ const store = new UserStore();
 
 usersRoute.get(
   "/",
+  authToken,
   async (req: express.Request, res: express.Response): Promise<void> => {
-    console.log("all");
     const users = await store.index();
     res.json(users);
   }
@@ -17,19 +19,43 @@ usersRoute.get(
 usersRoute.post(
   "/create/",
   async (req: express.Request, res: express.Response): Promise<void> => {
-    console.log("here");
     const user: User = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       password: req.body.password,
     };
-    const newUser = await store.create(user);
-    res.json(user);
+    try {
+      const newUser = await store.create(user);
+      const token = jwt.sign(
+        { user: newUser },
+        process.env.TOKEN_SECRET as string
+      );
+      res.send({ token });
+    } catch (e) {
+      res.send("Failed to create user");
+    }
   }
 );
 
+usersRoute.get("/auth", async (req: express.Request, res: express.Response) => {
+  try {
+    const user: User = await store.authenticateUser(
+      req.body.firsName,
+      req.body.lastName,
+      req.body.password_digest
+    );
+    if (user !== null) {
+      res.send(user);
+    }
+  } catch (err) {
+    res.status(400);
+    res.json(err as string);
+  }
+});
+
 usersRoute.get(
   "/show/:id",
+  authToken,
   async (req: express.Request, res: express.Response): Promise<void> => {
     const userID: string = req.params.id;
 
@@ -51,21 +77,5 @@ usersRoute.delete(
     res.send("user deleted");
   }
 );
-
-usersRoute.get("/auth", async (req: express.Request, res: express.Response) => {
-  try {
-    const user: User = await store.authenticateUser(
-      req.body.firsName,
-      req.body.lastName,
-      req.body.password_digest
-    );
-    if (user !== null) {
-      res.send(user);
-    }
-  } catch (err) {
-    res.status(400);
-    res.json(err as string);
-  }
-});
 
 export default usersRoute;
