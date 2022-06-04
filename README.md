@@ -3,7 +3,7 @@
 
 ## Configuration
 
-* Run yarn to get dependencies
+* Run npm to get dependencies
 * Create the Database as in env description below
 * Make env file
 * Follow REQUIREMENT file to see endpoints info & Database schema
