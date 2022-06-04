@@ -6,8 +6,16 @@
   "scripts": {
     "start": "node src/server.ts",
     "watch": "tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess \"node ./dist/server.js\"",
-    "test": "jasmine-ts",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "build": "yarn clean && npx tsc",
+    "testSV": "npm run build && jasmine",
+    "setenv": "cross-env ENV=test",
+    "start:dev": "nodemon --watch \"./src/index.ts\" --exec \"npx ts-node src/index.ts\"",
+    "clean": "rimraf build/",
+    "dbup": "npx db-migrate --env test up -c 4 && npx db-migrate up",
+    "dbreset": "npx db-migrate --env test reset && npx db-migrate reset -c 4 ",
+    "dbdown": "npx db-migrate --env test down && npx db-migrate down",
+    "test": "tsc && npm run dbreset &&export ENV=test&& npm run dbup && jasmine && npm run dbreset &&export ENV=dev"
   },
   "author": "Udacity",
   "license": "ISC",
