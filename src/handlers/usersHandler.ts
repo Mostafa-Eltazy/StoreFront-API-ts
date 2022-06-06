@@ -69,20 +69,24 @@ export class UserStore {
     lname: string,
     password: string
   ): Promise<User | any> {
-    const conn = await client.connect();
-    const sql = "SELECT * FROM users WHERE firstName=($1) AND lastName =($2);";
+    try {
+      const conn = await client.connect();
+      const sql =
+        "SELECT * FROM users WHERE firstName=($1) AND lastName =($2);";
 
-    const result = await conn.query(sql, [fname, lname]);
+      const result = await conn.query(sql, [fname, lname]);
 
-    if (result.rows.length) {
-      const user = result.rows[0];
-      console.log(user);
+      if (result.rows.length) {
+        const user = result.rows[0];
 
-      if (
-        bcrypt.compareSync(password + BCRYPT_PASSWORD, user.password_digest)
-      ) {
-        return user;
+        if (
+          bcrypt.compareSync(password + BCRYPT_PASSWORD, user.password_digest)
+        ) {
+          return user;
+        }
       }
+    } catch (err) {
+      throw new Error(`couldnt access user's data for validation`);
     }
     return null;
   }

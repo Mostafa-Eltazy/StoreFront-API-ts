@@ -11,8 +11,13 @@ usersRoute.get(
   "/",
   validateJWT,
   async (req: express.Request, res: express.Response): Promise<void> => {
-    const users = await store.index();
-    res.json(users);
+    try {
+      const users = await store.index();
+      res.json(users);
+    } catch (err) {
+      res.status(400);
+      res.json(err);
+    }
   }
 );
 
@@ -59,11 +64,16 @@ usersRoute.get(
   async (req: express.Request, res: express.Response): Promise<void> => {
     const userID: string = req.params.id;
 
-    const user = await store.show(userID);
-    if (user) {
-      res.json(user);
-    } else {
-      res.send(`Failed to find user with id: ${userID}`);
+    try {
+      const user = await store.show(userID);
+      if (user) {
+        res.json(user);
+      } else {
+        res.send(`Failed to find user with id: ${userID}`);
+      }
+    } catch (err) {
+      res.status(400);
+      res.json(err);
     }
   }
 );
@@ -72,9 +82,13 @@ usersRoute.delete(
   "/delete/:id",
   async (req: express.Request, res: express.Response): Promise<void> => {
     const userID: string = req.params.id;
-
-    const user = await store.delete(userID);
-    res.send("user deleted");
+    try {
+      const user = await store.delete(userID);
+      res.send("user deleted");
+    } catch (err) {
+      res.status(400);
+      res.json(err);
+    }
   }
 );
 

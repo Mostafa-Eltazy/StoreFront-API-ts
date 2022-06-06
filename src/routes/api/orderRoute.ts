@@ -10,8 +10,13 @@ ordersRoute.get(
   "/",
   validateJWT,
   async (req: express.Request, res: express.Response): Promise<void> => {
-    const orders = await store.index();
-    res.json(orders);
+    try {
+      const orders = await store.index();
+      res.json(orders);
+    } catch (err) {
+      res.status(400);
+      res.json(err);
+    }
   }
 );
 
@@ -20,12 +25,16 @@ ordersRoute.get(
   validateJWT,
   async (req: express.Request, res: express.Response): Promise<void> => {
     const orderID: string = req.params.id;
-
-    const order = await store.show(orderID);
-    if (order) {
-      res.json(order);
-    } else {
-      res.send(`Failed to find order with id: ${orderID}`);
+    try {
+      const order = await store.show(orderID);
+      if (order) {
+        res.json(order);
+      } else {
+        res.send(`Failed to find order with id: ${orderID}`);
+      }
+    } catch (err) {
+      res.status(400);
+      res.json(err);
     }
   }
 );
@@ -34,7 +43,7 @@ ordersRoute.get(
   "/user/:id",
   validateJWT,
 
-  async (req: express.Request,res: express.Response) => {
+  async (req: express.Request, res: express.Response) => {
     const userID: string = req.params.id;
     try {
       const userOrders = await store.getUserOrders(userID);
