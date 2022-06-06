@@ -26,6 +26,7 @@
 ## Database Setup
 
 ### Host: 127.0.0.1 
+### Port number : 5432 
 ###  Address: 0.0.0.0:3000 
 ### Database user: "postgres" 
 ### Database name: "store_db" 
