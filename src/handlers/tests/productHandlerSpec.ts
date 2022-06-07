@@ -19,6 +19,28 @@ describe("Product Model", ()=>{
         expect(store.create).toBeDefined();
       });
 
+    it('should diplay a list of products', async () => {
+        const newProduct = await store.create({
+            name: 'new product',
+            price: 0,
+        });
+        const result = await store.index();
+        expect(result.length).toBeGreaterThan(0);
+    })
+    
+    it('should show a single product', async () => {
+      const newProduct = await store.create({
+          name: 'new product',
+          price: 0,
+      });
+      const result = await store.show("2");
+      expect(result).toEqual({
+        id: newProduct.id,
+        name: newProduct.name,
+        price: newProduct.price,
+    })
+  })
+
     it('should create a product', async () => {
         const result = await store.create({
             name: 'new product',
@@ -32,4 +54,6 @@ describe("Product Model", ()=>{
         })
         testProduct = result
     })
+
+
 });

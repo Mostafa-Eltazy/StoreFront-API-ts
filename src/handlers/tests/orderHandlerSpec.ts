@@ -36,8 +36,7 @@ describe("Order Model", ()=>{
         await userStore.delete((testUser.id as unknown) as string)
     })
  
-    //should create an order
-    it('should create an order : create method', async () => {
+    it('should create an order', async () => {
         const result = await orderStore.create({
             user_id: (testUser.id as unknown) as string,
             status: "Open"
@@ -50,6 +49,38 @@ describe("Order Model", ()=>{
         })
         );
     })
+
+    it('should return a list of orders', async () => {
+      const newOrder = await orderStore.create({
+          user_id: (testUser.id as unknown) as string,
+          status: "Open"
+      })
+      const result = await orderStore.index()
+      expect(result.length).toBeGreaterThan(0)
+  })
+
+  it('should return a single order', async () => {
+    const newOrder = await orderStore.create({
+        user_id: (testUser.id as unknown) as string,
+        status: "Open"
+    })
+    const result = await orderStore.show("3");
+    expect(result).toEqual({
+      id: newOrder.id,
+      status: newOrder.status,
+      user_id: newOrder.user_id
+  })
+})
+
+it('should return a user order', async () => {
+  const newOrder = await orderStore.create({
+      user_id: "1",
+      status: "active"
+  })
+  console.log(await userStore.index())
+  const result = await orderStore.getUserOrders("1");
+  expect(result.length).toBeGreaterThan(0)
+})
 
 
 });   
